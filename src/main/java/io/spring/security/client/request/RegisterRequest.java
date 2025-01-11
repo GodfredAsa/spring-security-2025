@@ -1,11 +1,5 @@
 package io.spring.security.client.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-
 public class RegisterRequest {
     private String firstname;
     private String lastname;
