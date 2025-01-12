@@ -9,10 +9,16 @@ import io.spring.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Service
 public class AuthenticationService {
@@ -89,6 +95,44 @@ public class AuthenticationService {
         repository.save(user);
         return user;
     }
+
+
+//    METHOD LEVEL SECURITY
+@PreAuthorize("hasRole('ADMIN')")
+public void adminMethod() {
+    System.out.println("Admin method accessed");
+}
+
+    @PreAuthorize("hasAnyRole('HR', 'FINANCE')")
+    public Long getLoan(){
+        return  100_000L;
+    }
+
+    @PreAuthorize("hasAnyAuthority('HR', 'FINANCE')")
+    public Long getLoan(Long amount){
+        return  100_000L + amount;
+    }
+
+    @PreAuthorize("hasAuthority('HR')")
+    public Long getLoan(Long amount, Long initialAmount){
+        return  100_000L + amount + initialAmount;
+    }
+
+    //    Only allow the login username to access this method
+    @PreAuthorize("#username == authentication.principal.username")
+    public String getLoans(String username){
+        return String.valueOf(100_000L + 100L);
+    }
+
+//    POST-AUTHORIZED annotation
+    @PostAuthorize("#username == authentication.principal.username")
+//    @PostAuthorize("hasAuthority('HR')")
+//    @PostAuthorize("hasAnyAuthority('HR', 'FINANCE')")
+    public User getUsers(String username){
+        return new User();
+    }
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package io.spring.security.config;
 
+import io.spring.security.filter.AuthoritiesLoggingAtFilter;
 import io.spring.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configurers.CorsConfig
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import java.util.Collections;
 import java.util.List;
@@ -30,14 +32,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable);
-        // allowed origin you can remove the line below
-        http.cors(SecurityConfig::customizedCrossOrigin);
-        /** Line below is for allowing only https, if not required remove it.
-            1. requiresSecure() ensures that only https is allowed.
-            2. requiresInsecure() allows all.
-         **/
-        return http.requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresInsecure())
+        return http.csrf(AbstractHttpConfigurer::disable)
+                // allowed origin you can remove the line below
+                .cors(SecurityConfig::customizedCrossOrigin)
+                //  Line below is for allowing only https, if not required remove it.
+//                 1. requiresSecure() ensures that only https is allowed.
+//                 2. requiresInsecure() allows all.
+                .requiresChannel(requiresChannel -> requiresChannel.anyRequest().requiresInsecure())
                 .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")

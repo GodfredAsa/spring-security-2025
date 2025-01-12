@@ -1,4 +1,4 @@
-package io.spring.security.comtroller;
+package io.spring.security.controller;
 
 import io.spring.security.client.request.AuthenticationRequest;
 import io.spring.security.client.request.RegisterRequest;
@@ -45,18 +45,41 @@ public class AuthenticationController {
         return ResponseEntity.ok(service.authenticate(request));
     }
 
-
-    @PreAuthorize("hasRole('ADMIN')")
-    public void adminMethod() {
-        System.out.println("Admin method accessed");
-    }
-
     @PreAuthorize("hasRole('FINANCE')")
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
-       List<User> users = userRepository.findAll();
-       return ResponseEntity.ok(users);
+        List<User> users = userRepository.findAll();
+        return ResponseEntity.ok(users);
     }
+
+//    METHOD LEVEL SECURITY
+    @GetMapping("/admin/{username}")
+    public User getAdmin(String username){
+        return service.getUsers(username);
+    }
+
+    @GetMapping("/admin/loans/{username}")
+    public String getLoans(String username){
+        return service.getLoans(username);
+    }
+
+    @GetMapping("/admin/loans/{amount}/{initialAmount}")
+    public Long getLoan(Long amount, Long initialAmount){
+        return service.getLoan(amount, initialAmount);
+    }
+
+
+    @GetMapping("/admin/loans/{amount}")
+    public Long getLoan(Long amount){
+        return amount <= 0 ? service.getLoan() : service.getLoan(amount);
+    }
+
+
+    @GetMapping("/admin/finance/{email}")
+    public List<User> getUsersByFinanceEmail(@PathVariable String email) {
+        return userRepository.getAllUsersByEmail(email);
+    }
+
 
 
 }
