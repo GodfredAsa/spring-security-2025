@@ -22,7 +22,12 @@ public class AuthoritiesLoggingAtFilter implements Filter {
 
         // Retrieve the current authentication
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (authentication != null && authentication.isAuthenticated()) {
+            // Log the authenticated user's principal name
+            String principalName = authentication.getName();
+            LOGGER.info("AuthoritiesLoggingAtFilter: Authenticated User: {}", principalName);
+
             // Log the authorities
             String authorities = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
@@ -33,6 +38,5 @@ public class AuthoritiesLoggingAtFilter implements Filter {
         }
 
         chain.doFilter(request, response);
-
     }
 }
