@@ -2,6 +2,7 @@ package io.spring.security.controller;
 
 import io.spring.security.client.request.AuthenticationRequest;
 import io.spring.security.client.request.RegisterRequest;
+import io.spring.security.client.response.ApiResponse;
 import io.spring.security.client.response.AuthenticationResponse;
 import io.spring.security.entity.User;
 import io.spring.security.repository.UserRepository;
@@ -26,7 +27,7 @@ public class AuthenticationController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<ApiResponse<User>> register(@RequestBody RegisterRequest request) {
         return ResponseEntity.ok(service.register(request));
     }
 

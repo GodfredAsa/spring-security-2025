@@ -2,6 +2,7 @@ package io.spring.security.service;
 
 import io.spring.security.client.request.AuthenticationRequest;
 import io.spring.security.client.request.RegisterRequest;
+import io.spring.security.client.response.ApiResponse;
 import io.spring.security.client.response.AuthenticationResponse;
 import io.spring.security.entity.Role;
 import io.spring.security.entity.User;
@@ -9,6 +10,7 @@ import io.spring.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +37,7 @@ public class AuthenticationService {
         this.authenticationManager = authenticationManager;
     }
 
-    public User register(RegisterRequest request) {
+    public ApiResponse<User> register(RegisterRequest request) {
         repository.findByEmail(request.getEmail()).ifPresent(user -> {
             throw new IllegalStateException("Email already in use");
         });
@@ -47,7 +49,7 @@ public class AuthenticationService {
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
         repository.save(user);
-        return user;
+        return new ApiResponse<>(HttpStatus.CREATED.value(), "User created successfully", "Success", user);
     }
 
 
